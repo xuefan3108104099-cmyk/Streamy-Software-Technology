@@ -9,17 +9,42 @@ This tracking document establishes the baseline static structures for the Stream
 The architectural class schema below plots our primary data properties, encapsulation metrics, and loose directional system associations:
 
 ```mermaid
----
-title: Streamy Base Domain Associations Blueprint
----
 classDiagram
-class Title {
-    +String name
-    +int releaseYear
-    +playMedia() Boolean
-}
-class Genre {
-    +String genreName
-    +getMediaCatalog() List
-}
-Title -- Genre : categorized_under
+    class Title {
+        <<abstract>>
+        +String name
+        +int releaseYear
+        +playMedia() Boolean
+    }
+    class Film {
+        +int lengthMinutes
+    }
+    class TVShow {
+        +int seasonsCount
+    }
+    class Season {
+        +int seasonNumber
+    }
+    class Episode {
+        +String episodeTitle
+        +int durationSeconds
+    }
+    class Review {
+        +int ratingStars
+        +String reviewText
+    }
+    class Actor {
+        +String fullName
+    }
+    class Genre {
+        +String genreName
+    }
+
+    Title "0..*" -- "1..*" Genre : categorized_under
+    TVShow "1" *-- "0..*" Season : owns
+    Season "1" *-- "1..*" Episode : contains
+    Title "1" -- "0..*" Review : receives
+    Title "0..*" o-- "0..*" Actor : features
+
+    Title <|-- Film
+    Title <|-- TVShow
